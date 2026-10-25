@@ -55,7 +55,7 @@ There are many Zoho skills on the community hubs. This one was built from daily 
 
 ## Tested
 
-TESTED_PLACEHOLDER
+Tested on Hermes Agent v0.22.2 with an agent run per task, against a Zoho One account in the eu data center: install from the tap (security scan: safe), connection check, CRM search and upsert (second run updated the record instead of creating a duplicate), mail send with a dry run first, threaded reply (original and reply share one thread id), WorkDrive folder and upload with matching SHA-256. Other data centers use the same code with the hosts from Zoho's documentation and are not tested yet. Reports from other regions are welcome.
 
 ## License
 

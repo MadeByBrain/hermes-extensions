@@ -6,7 +6,6 @@ The `skills/` folder is a Hermes skill tap. Add it once and every skill in it be
 
 ```bash
 hermes skills tap add MadeByBrain/hermes-extensions
-hermes skills search zoho
 hermes skills install MadeByBrain/hermes-extensions/skills/zoho-one
 ```
 
