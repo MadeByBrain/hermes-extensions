@@ -1,7 +1,7 @@
 ---
 name: zoho-one
 description: Use Zoho CRM, Mail and WorkDrive via REST, any region.
-version: 1.0.0
+version: 1.0.1
 author: MadeByBrain
 license: MIT
 platforms: [linux, macos, windows]
@@ -42,11 +42,13 @@ Work with a Zoho One account directly: CRM records, mail (including replies that
 2. The four variables from the frontmatter in `${HERMES_HOME:-~/.hermes}/.env`. `ZOHO_DC` must match the region of the account. Wrong region is the most common failure and shows up as `invalid_client` or `F7003`, not as a region error.
 3. Python 3.8 or newer. Nothing to install.
 
-The helper lives next to this file. Run it through the `terminal` tool, with the path from `skill_view` (`skill_dir`):
+The helper lives next to this file. Run it through the `terminal` tool:
 
 ```
-python3 <skill_dir>/scripts/zoho_api.py check
+python3 ${HERMES_SKILL_DIR}/scripts/zoho_api.py check
 ```
+
+In the table below, `zoho_api.py` stands for `python3 ${HERMES_SKILL_DIR}/scripts/zoho_api.py`.
 
 `check` must return `"ok": true` with the API hosts before anything else. Every command prints JSON. The script never prints the access token or the client secret, and it caches the access token in `$HERMES_HOME/cache/zoho-one/access.json` (mode 600).
 
