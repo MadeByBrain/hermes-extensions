@@ -1,5 +1,9 @@
 # Changelog: zoho-one
 
+## zoho-one-v1.0.2
+
+- README and changelog moved out of the skill folder to `docs/skills/`, so an installed skill contains only SKILL.md, the helper script and the references (Hermes skill linter rule).
+
 ## zoho-one-v1.0.1
 
 - SKILL.md uses `${HERMES_SKILL_DIR}` for the helper path, which Hermes fills in when the skill loads, so the agent no longer has to look the path up first.

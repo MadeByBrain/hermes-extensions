@@ -21,7 +21,7 @@ Skills from a tap run through the Hermes security scan on install and are marked
 
 | Skill | What it does | Version |
 |---|---|---|
-| [zoho-one](skills/zoho-one) | Zoho CRM, Mail and WorkDrive over REST in every Zoho region: upsert records, reply in the mail thread, upload files with a SHA-256 check. Stdlib only, no third-party gateway. | 1.0.1 |
+| [zoho-one](docs/skills/zoho-one.md) | Zoho CRM, Mail and WorkDrive over REST in every Zoho region: upsert records, reply in the mail thread, upload files with a SHA-256 check. Stdlib only, no third-party gateway. | 1.0.2 |
 
 ## Plugins
 
@@ -32,7 +32,7 @@ None yet in this repo. Published plugins with their own repos:
 
 ## Versions
 
-Every entry is versioned on its own. Tags follow `<name>-vX.Y.Z` (for example `zoho-one-v1.0.0`), and each skill keeps its own `CHANGELOG.md`.
+Every entry is versioned on its own. Tags follow `<name>-vX.Y.Z` (for example `zoho-one-v1.0.0`), and each skill has its own README and changelog in `docs/skills/`.
 
 ## Beyond these extensions
 

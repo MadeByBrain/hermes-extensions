@@ -1,7 +1,7 @@
 ---
 name: zoho-one
 description: Use Zoho CRM, Mail and WorkDrive via REST, any region.
-version: 1.0.1
+version: 1.0.2
 author: MadeByBrain
 license: MIT
 platforms: [linux, macos, windows]

@@ -25,7 +25,7 @@ There are many Zoho skills on the community hubs. This one was built from daily 
 
 ## Setup
 
-1. Create a Server-based OAuth client and run the one-time consent, as described in [references/oauth-setup.md](references/oauth-setup.md). The helper prints the consent URL and exchanges the code, so the secret never goes into a curl command line.
+1. Create a Server-based OAuth client and run the one-time consent, as described in [references/oauth-setup.md](../../skills/zoho-one/references/oauth-setup.md). The helper prints the consent URL and exchanges the code, so the secret never goes into a curl command line.
 2. Put four values into the `.env` file of your Hermes home: `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_DC`.
 3. Ask Hermes to "check the Zoho connection". It runs `scripts/zoho_api.py check` and shows the API hosts for your region.
 
@@ -40,7 +40,7 @@ There are many Zoho skills on the community hubs. This one was built from daily 
 
 | File | Content |
 |---|---|
-| `SKILL.md` | Instructions for the agent |
+| [`SKILL.md`](../../skills/zoho-one/SKILL.md) | Instructions for the agent |
 | `scripts/zoho_api.py` | Helper: regions, cached access, mail send and reply, WorkDrive list, mkdir, upload with check, generic `request` |
 | `references/oauth-setup.md` | Client, consent, scopes, rate limit |
 | `references/crm.md` | Search, COQL, create, upsert, notes, tags |
