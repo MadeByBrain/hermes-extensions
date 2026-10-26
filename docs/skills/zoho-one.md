@@ -1,5 +1,7 @@
 # zoho-one
 
+![zoho-one: Zoho CRM, Mail and WorkDrive for Hermes Agent](zoho-one-banner.png)
+
 A Hermes Agent skill for Zoho One: CRM records, Zoho Mail and WorkDrive files over the official REST APIs, in every Zoho data center.
 
 ```bash
