@@ -25,14 +25,24 @@ Skills from a tap run through the Hermes security scan on install and are marked
 
 ## Plugins
 
-None yet in this repo. Published plugins with their own repos:
+Install a plugin from its subfolder:
+
+```bash
+hermes plugins install MadeByBrain/hermes-extensions/plugins/writing-guard --enable
+```
+
+| Plugin | What it does | Version |
+|---|---|---|
+| [writing-guard](plugins/writing-guard/README.md) | Style check for every Hermes answer in German and English: finds em and en dashes (optionally replaces them), reports stock AI phrases and mixed or switched du/Sie. Rule based, no model calls. | 1.0.0 |
+
+Published plugins with their own repos:
 
 - [hermes-chat-length](https://github.com/MadeByBrain/hermes-chat-length): suggests a fresh chat with a start prompt before the context window fills up. In the official plugin catalog.
-- [hermes-de-law](https://github.com/MadeByBrain/hermes-de-law): German federal law, EU law and federal court decisions from the official sources.
+- [hermes-de-law](https://github.com/MadeByBrain/hermes-de-law): German federal law, EU law and federal court decisions from the official sources. In the official plugin catalog.
 
 ## Versions
 
-Every entry is versioned on its own. Tags follow `<name>-vX.Y.Z` (for example `zoho-one-v1.0.0`), and each skill has its own README and changelog in `docs/skills/`.
+Every entry is versioned on its own. Tags follow `<name>-vX.Y.Z` (for example `zoho-one-v1.0.0`). Each skill has its own README and changelog in `docs/skills/`, each plugin in its folder under `plugins/`.
 
 ## Beyond these extensions
 

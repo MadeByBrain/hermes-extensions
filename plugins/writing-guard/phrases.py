@@ -1,0 +1,71 @@
+"""Stock phrases that make text read as machine written, German and English.
+
+Each rule: (id, language, regex). Patterns are matched case-insensitively against prose only
+(code, URLs, MEDIA lines and quotes are masked out first). Keep patterns specific: a phrase that
+people use all the time in normal writing does not belong here, because every false alarm
+teaches the user to ignore the report.
+"""
+from __future__ import annotations
+
+PHRASES: list[tuple[str, str, str]] = [
+    # ------------------------------------------------------------------ German
+    ("de.wichtig_zu_beachten", "de", r"\bes ist (?:wichtig|erwähnenswert),? zu (?:beachten|betonen|erwähnen)\b"),
+    ("de.wichtig_ist_zu", "de", r"\b(?:wichtig|erwähnenswert) ist (?:es )?(?:zu beachten|hierbei|dabei),"),
+    ("de.zusammenfassend", "de", r"\b(?:zusammenfassend|abschließend) (?:lässt sich|kann man) sagen\b"),
+    ("de.heutige_welt", "de", r"\bin der heutigen (?:schnelllebigen |digitalen |modernen |vernetzten )?(?:welt|zeit|gesellschaft)\b"),
+    ("de.hoffe_hilft", "de", r"\bich hoffe,? (?:das|dies|diese (?:informationen|antwort|übersicht))(?: \w+)? (?:hilft|helfen)\b"),
+    ("de.lass_mich_wissen", "de", r"\b(?:lass(?:t)? mich|lassen sie mich) (?:gerne |einfach )?wissen,? (?:ob|wenn|falls)\b"),
+    ("de.gerne_helfe_ich", "de", r"\b(?:gerne helfe ich|ich helfe (?:dir|ihnen|euch) gerne)\b"),
+    ("de.helfe_weiter", "de", r"\b(?:ich stehe (?:dir|ihnen|euch) gerne (?:zur verfügung|zur seite)|bei weiteren fragen stehe ich)\b"),
+    ("de.eintauchen", "de", r"\b(?:tauchen wir (?:ein|tiefer|gemeinsam)|lass(?:t)? uns (?:tiefer |gemeinsam )?eintauchen|eintauchen in die (?:welt|thematik))\b"),
+    ("de.gute_frage", "de", r"\b(?:das ist eine )?(?:sehr |wirklich )?(?:gute|großartige|tolle|spannende|ausgezeichnete) frage[!.]"),
+    ("de.als_ki", "de", r"\bals (?:eine? )?(?:ki|künstliche intelligenz|ki-sprachmodell|sprachmodell)(?:-assistent)?,? (?:kann|habe|bin) ich\b"),
+    ("de.nahtlos", "de", r"\bnahtlos(?:e|en|er|es)?\b"),
+    ("de.game_changer", "de", r"\b(?:ein |der |echter )*game[- ]?changer\b"),
+    ("de.naechstes_level", "de", r"\bauf (?:ein neues|das nächste) (?:level|niveau)\b|\bauf die nächste stufe (?:heben|bringen)\b"),
+    ("de.volles_potenzial", "de", r"\b(?:das|ihr|sein|dein|ihr) (?:volles|ganzes) potenzial (?:entfalten|ausschöpfen|freisetzen)\b"),
+    ("de.spannende_reise", "de", r"\b(?:auf (?:dieser|deiner|ihrer|einer) (?:spannenden )?reise|eine spannende reise)\b"),
+    ("de.entscheidende_rolle", "de", r"\bspielt eine (?:entscheidende|zentrale|wichtige|maßgebliche) rolle\b"),
+    ("de.von_bedeutung", "de", r"\bvon (?:entscheidender|zentraler|großer) bedeutung\b"),
+    ("de.welt_der", "de", r"\bin der (?:faszinierenden |spannenden )?welt (?:der|des) \w+"),
+    ("de.revolution", "de", r"\b(?:revolutioniert|revolutionieren|revolutionär(?:e|en|er|es)?)\b"),
+    ("de.im_folgenden", "de", r"\bim folgenden (?:werde ich|erkläre ich|zeige ich|gehe ich)\b"),
+    ("de.zweifellos", "de", r"\b(?:zweifellos|zweifelsohne|ohne zweifel)\b"),
+    ("de.nicht_vergessen", "de", r"\bnicht zu vergessen\b"),
+    ("de.ganzheitlich", "de", r"\bganzheitlich(?:e|en|er|es)? (?:ansatz|lösung|betrachtung)\b"),
+    ("de.mehrwert_bieten", "de", r"\b(?:echten |einen )?mehrwert (?:bieten|liefern|schaffen)\b"),
+    ("de.froh_fragst", "de", r"\b(?:schön|toll|freut mich),? dass (?:du|sie) (?:fragst|fragen)\b"),
+    ("de.hier_ist_ueberblick", "de", r"\bhier (?:ist|sind) (?:ein )?(?:umfassende[rs]?|detaillierte[rs]?|ausführliche[rs]?) (?:überblick|übersicht|leitfaden|anleitung)\b"),
+    ("de.zu_guter_letzt", "de", r"\bzu guter letzt\b"),
+    ("de.wertvolle_einblicke", "de", r"\bwertvolle (?:einblicke|erkenntnisse|tipps)\b"),
+    # ------------------------------------------------------------------ English
+    ("en.important_to_note", "en", r"\bit(?:'s| is) (?:important|worth|crucial) (?:to note|noting|to remember|to mention)\b"),
+    ("en.todays_world", "en", r"\bin today'?s (?:fast-paced |digital |ever-changing |modern |rapidly evolving )?(?:world|landscape|age|era)\b"),
+    ("en.hope_helps", "en", r"\bi hope (?:this|that|these|this information) (?:helps|was helpful|is helpful)\b"),
+    ("en.let_me_know", "en", r"\b(?:let me know if you(?:'d| would)? (?:like|have|need|want)|feel free to (?:ask|reach out|let me know))\b"),
+    ("en.great_question", "en", r"\b(?:what a |that'?s a |such a )?(?:great|excellent|fantastic|good) question[!.]"),
+    ("en.certainly", "en", r"(?:^|\n)\s*(?:certainly|absolutely|of course)!"),
+    ("en.as_an_ai", "en", r"\bas an ai(?: language model| assistant)?\b"),
+    ("en.delve", "en", r"\bdelv(?:e|es|ed|ing)\b"),
+    ("en.tapestry", "en", r"\b(?:rich |vibrant |intricate )?tapestry\b"),
+    ("en.testament", "en", r"\b(?:is |stands as )?a testament to\b"),
+    ("en.navigate", "en", r"\bnavigat(?:e|ing) the (?:complexities|complex|intricacies|landscape|world)\b"),
+    ("en.game_changer", "en", r"\bgame[- ]?changer\b"),
+    ("en.unlock_potential", "en", r"\b(?:unlock|unleash|harness)(?:ing|es|s)? the (?:full )?(?:power|potential)\b"),
+    ("en.seamless", "en", r"\bseamless(?:ly)?\b"),
+    ("en.in_conclusion", "en", r"\b(?:in conclusion|to sum up|in summary),"),
+    ("en.dive_in", "en", r"\blet'?s dive (?:in|into|deeper)\b|\b(?:deep|deeper) dive into\b"),
+    ("en.crucial_role", "en", r"\bplays? a (?:crucial|pivotal|vital|key|significant) role\b"),
+    ("en.ever_evolving", "en", r"\bever-(?:evolving|changing|growing) (?:landscape|world|field)\b"),
+    ("en.embark", "en", r"\bembark(?:ing)? on (?:a|an|your|this)\b"),
+    ("en.elevate", "en", r"\belevate (?:your|the|our)\b"),
+    ("en.happy_to_help", "en", r"\bi'?d be (?:happy|glad|delighted) to help\b"),
+    ("en.realm", "en", r"\bin the realm of\b"),
+    ("en.moreover", "en", r"(?:^|\n|\. )(?:moreover|furthermore),"),
+    ("en.not_only_but", "en", r"\bit'?s not (?:just|only) about \w+(?: \w+)?,? it'?s about\b"),
+    ("en.robust_solution", "en", r"\b(?:robust|comprehensive|holistic) (?:solution|approach|framework) (?:that|to)\b"),
+    ("en.valuable_insights", "en", r"\bvaluable (?:insights|tips|information)\b"),
+    ("en.here_is_overview", "en", r"\bhere(?:'s| is) a (?:comprehensive|detailed|thorough) (?:overview|guide|breakdown)\b"),
+    ("en.underscore", "en", r"\bunderscores? the (?:importance|need)\b"),
+    ("en.at_the_end_of_day", "en", r"\bat the end of the day\b"),
+]
