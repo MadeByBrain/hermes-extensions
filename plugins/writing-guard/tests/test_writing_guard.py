@@ -318,6 +318,50 @@ class Hook(unittest.TestCase):
         self.assertLess((time.perf_counter() - start) / 10, 0.05)
 
 
+class Performance(unittest.TestCase):
+    """The check runs inside the turn on every answer: a slow regex stalls the whole reply.
+
+    Every input is MAX_CHARS long (200k), built to hit quadratic backtracking: long runs of
+    newlines, spaces, tabs and dashes. Each must pass check() in report and fix mode well under
+    a second (about 0.3 s on our machine).
+    """
+
+    LIMIT = 1.0
+
+    def _inputs(self):
+        n = guard.MAX_CHARS
+        unit = "\n" + " " * 7
+        return {
+            "newlines and spaces + dash": (unit * (n // len(unit)))[: n - 5] + f"a {EM} b",
+            "newlines + dash": "\n" * (n - 1) + EM,
+            "spaces + dash": " " * (n - 1) + EM,
+            "tabs and spaces + dash": "\t " * (n // 2 - 1) + "x" + EM,
+            "dash run": EM * (n - 1) + "x",
+            "spaced dashes": (f" {EM} " * (n // 3))[: n],
+            "md link targets": "](" * (n // 2),
+            "mail brackets": "<" + "a@" * (n // 2 - 1),
+        }
+
+    def test_long_runs_are_fast(self):
+        for name, text in self._inputs().items():
+            self.assertLessEqual(len(text), guard.MAX_CHARS, name)
+            for fix in (False, True):
+                start = time.perf_counter()
+                guard.check(text, fix=fix, address="du")
+                elapsed = time.perf_counter() - start
+                self.assertLess(elapsed, self.LIMIT, f"{name}, fix={fix}: {elapsed:.2f} s")
+
+    def test_bounded_patterns_still_fix(self):
+        rep = guard.check("a" + " " * 40 + EM + " " * 40 + "b", fix=True)
+        self.assertEqual(guard.count_dashes(rep.text), 0)
+        self.assertTrue(rep.text.startswith("a") and rep.text.endswith("b"))
+        rep = guard.check("Wort " + EM * 3 + "\nNeue Zeile", fix=True)
+        self.assertEqual(rep.text, "Wort\nNeue Zeile")
+        hits = guard.find_phrases("Intro\n   \t Certainly! Here it is.")
+        self.assertIn("en.certainly", [h.id for h in hits])
+        self.assertNotIn("en.certainly", [h.id for h in guard.find_phrases("He said certainly! twice")])
+
+
 class ToolAndCommand(unittest.TestCase):
     def test_tool(self):
         schema, handler = setup().tools["writing_guard_check"]

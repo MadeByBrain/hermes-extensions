@@ -1,9 +1,11 @@
 """Stock phrases that make text read as machine written, German and English.
 
-Each rule: (id, language, regex). Patterns are matched case-insensitively against prose only
-(code, URLs, MEDIA lines and quotes are masked out first). Keep patterns specific: a phrase that
-people use all the time in normal writing does not belong here, because every false alarm
-teaches the user to ignore the report.
+Each rule: (id, language, regex). Patterns are compiled with re.I and re.M (^ and $ match at
+every line) and run against prose only (code, URLs, MEDIA lines and quotes are masked out first).
+The check runs inside the turn on every answer, so never start a pattern with an unbounded
+quantifier that can cross lines (\\s*, .*): it turns long runs of whitespace quadratic. Use
+^[ \\t]* (re.M) instead. Keep patterns specific: a phrase that people use all the time in normal
+writing does not belong here, because every false alarm teaches the user to ignore the report.
 """
 from __future__ import annotations
 
@@ -44,7 +46,7 @@ PHRASES: list[tuple[str, str, str]] = [
     ("en.hope_helps", "en", r"\bi hope (?:this|that|these|this information) (?:helps|was helpful|is helpful)\b"),
     ("en.let_me_know", "en", r"\b(?:let me know if you(?:'d| would)? (?:like|have|need|want)|feel free to (?:ask|reach out|let me know))\b"),
     ("en.great_question", "en", r"\b(?:what a |that'?s a |such a )?(?:great|excellent|fantastic|good) question[!.]"),
-    ("en.certainly", "en", r"(?:^|\n)\s*(?:certainly|absolutely|of course)!"),
+    ("en.certainly", "en", r"^[ \t]*(?:certainly|absolutely|of course)!"),
     ("en.as_an_ai", "en", r"\bas an ai(?: language model| assistant)?\b"),
     ("en.delve", "en", r"\bdelv(?:e|es|ed|ing)\b"),
     ("en.tapestry", "en", r"\b(?:rich |vibrant |intricate )?tapestry\b"),

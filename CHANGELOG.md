@@ -2,6 +2,10 @@
 
 Each entry has its own changelog and tags (`<name>-vX.Y.Z`). Release notes are taken from the sections below.
 
+## writing-guard-v1.0.1
+
+`writing-guard`: performance fix after the Nous catalog review. Long runs of newlines, spaces or dashes no longer take quadratic time (a 200k character input went from about 119 s to about 0.3 s); results are unchanged. New timing tests. Details: [plugins/writing-guard/CHANGELOG.md](plugins/writing-guard/CHANGELOG.md).
+
 ## writing-guard-v1.0.0
 
 First release of the plugin `writing-guard`: style check for every Hermes answer in German and English (dashes, AI phrases, du/Sie). Reports by default, optional dash fixing, no model calls, no network. Details: [plugins/writing-guard/CHANGELOG.md](plugins/writing-guard/CHANGELOG.md).

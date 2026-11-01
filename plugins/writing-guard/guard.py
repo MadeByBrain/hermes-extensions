@@ -24,8 +24,8 @@ MAX_CHARS = 200_000
 _BT = "\x60"  # backtick, written as an escape so security scanners do not read it as shell
 _FENCE_RE = re.compile(r"^\s{0,3}(" + _BT + r"{3,}|~{3,})")
 _INLINE_CODE_RE = re.compile("(" + _BT + "+)(?!" + _BT + ").+?(?<!" + _BT + r")\1")
-_URL_RE = re.compile(r"(?:https?://|www\.)[^\s<>()\[\]]+|<[^<>\s]+@[^<>\s]+>")
-_MD_LINK_TARGET_RE = re.compile(r"\]\([^)\s]+\)")
+_URL_RE = re.compile(r"(?:https?://|www\.)[^\s<>()\[\]]+|<[^<>\s@]+@[^<>\s]+>")
+_MD_LINK_TARGET_RE = re.compile(r"\]\([^()\s]+\)")
 
 
 def mask(text: str, skip_quotes: bool = True) -> tuple[str, list[str]]:
@@ -46,6 +46,9 @@ def mask(text: str, skip_quotes: bool = True) -> tuple[str, list[str]]:
             m = _FENCE_RE.match(body)
             if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) and not body.strip()[len(m.group(1)):].strip():
                 fence = None
+            continue
+        if not body.strip():
+            out.append(line)
             continue
         m = _FENCE_RE.match(body)
         if m:
@@ -100,13 +103,17 @@ def count_dashes(masked: str) -> int:
 _WORDCH = r"0-9A-Za-zÄÖÜäöüßÀ-ÿ"
 _BULLET_RE = re.compile(rf"^([ \t]*){_D}[ \t]+", re.M)
 _LEAD_RE = re.compile(rf"^([ \t]*){_D}(?=\S)", re.M)
-_CELL_RE = re.compile(rf"(?<=\|)[ \t]*{_D}[ \t]*(?=\|)")
+# Unanchored patterns run at every position of the text, so an unbounded [ \t]* or dash run would
+# make long runs of spaces or dashes quadratic. _SP and _DS bound them; anchors and lookaheads stay.
+_SP = r"[ \t]{0,16}"
+_DS = rf"{_D}{{1,16}}"
+_CELL_RE = re.compile(rf"(?<=\|){_SP}{_D}{_SP}(?=\|)")
 _RANGE_RE = re.compile(rf"(?<=[{_WORDCH}.])[\u2012\u2013](?=[{_WORDCH}])")
-_NUM_RANGE_RE = re.compile(rf"(?<=\d)[ \t]*{_D}[ \t]*(?=\d)")
-_END_RE = re.compile(rf"[ \t]*{_D}+[ \t]*$", re.M)
-_BEFORE_PUNCT_RE = re.compile(rf"[ \t]*{_D}+[ \t]*(?=[,.;:!?)\]\"“”»])")
-_AFTER_OPEN_RE = re.compile(rf"(?<=[(\[„“\"«])[ \t]*{_D}+[ \t]*")
-_SPACED_RE = re.compile(rf"[ \t]*{_D}+[ \t]*")
+_NUM_RANGE_RE = re.compile(rf"(?<=\d){_SP}{_D}{_SP}(?=\d)")
+_END_RE = re.compile(rf"{_SP}{_DS}{_SP}$", re.M)
+_BEFORE_PUNCT_RE = re.compile(rf"{_SP}{_DS}{_SP}(?=[,.;:!?)\]\"“”»])")
+_AFTER_OPEN_RE = re.compile(rf"(?<=[(\[„“\"«]){_SP}{_DS}{_SP}")
+_SPACED_RE = re.compile(rf"{_SP}{_DS}{_SP}")
 
 
 def fix_dashes(masked: str, style: str = "comma") -> tuple[str, int]:
@@ -136,7 +143,7 @@ def fix_dashes(masked: str, style: str = "comma") -> tuple[str, int]:
 
 # ----------------------------------------------------------------------------- phrases
 
-_COMPILED = [(pid, lang, re.compile(rx, re.I)) for pid, lang, rx in PHRASES]
+_COMPILED = [(pid, lang, re.compile(rx, re.I | re.M)) for pid, lang, rx in PHRASES]
 
 
 @dataclass

@@ -33,7 +33,7 @@ hermes plugins install MadeByBrain/hermes-extensions/plugins/writing-guard --ena
 
 | Plugin | What it does | Version |
 |---|---|---|
-| [writing-guard](plugins/writing-guard/README.md) | Style check for every Hermes answer in German and English: finds em and en dashes (optionally replaces them), reports stock AI phrases and mixed or switched du/Sie. Rule based, no model calls. | 1.0.0 |
+| [writing-guard](plugins/writing-guard/README.md) | Style check for every Hermes answer in German and English: finds em and en dashes (optionally replaces them), reports stock AI phrases and mixed or switched du/Sie. Rule based, no model calls. | 1.0.1 |
 
 Published plugins with their own repos:
 
