@@ -1,0 +1,91 @@
+name: Hermes compatibility
+
+# Runs the offline tests and `hermes plugins validate` against the latest Hermes Agent release
+# (and, as an early warning that never fails the badge, against Hermes main).
+# Weekly, on every push to main, on pull requests, and by hand.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Hermes ${{ matrix.hermes }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: ${{ matrix.hermes == 'main' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        hermes: [release, main]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Hermes ref
+        id: ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${{ matrix.hermes }}" = release ]; then
+            ref=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+              https://api.github.com/repos/NousResearch/hermes-agent/releases/latest \
+              | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"])')
+          else
+            ref=main
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Hermes Agent: $ref"
+
+      # Same setup as Nous' own plugin-validate action: Hermes' locked toolchain and runtime.
+      - name: Install Hermes Agent
+        id: hermes
+        env:
+          REF: ${{ steps.ref.outputs.ref }}
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/hermes"
+          git init -q "$src"
+          git -C "$src" remote add origin https://github.com/NousResearch/hermes-agent.git
+          git -C "$src" fetch -q --depth=1 origin "$REF"
+          git -C "$src" checkout -q --detach FETCH_HEAD
+          python3 -S "$src/scripts/ci/setup_toolchain.py" prepare --toolchain python --home "$src/.build/pm"
+          python3 -S "$src/scripts/ci/setup_toolchain.py" install --toolchain python --home "$src/.build/pm"
+          echo "src=$src" >> "$GITHUB_OUTPUT"
+
+      - name: Build Hermes runtime
+        id: runtime
+        working-directory: ${{ steps.hermes.outputs.src }}
+        run: |
+          set -euo pipefail
+          "$HERMES_PYTHON" - <<'PY'
+          import os
+          from pathlib import Path
+          from pm import build_environment
+          src = Path(os.getcwd())
+          python = build_environment(source=src, out=src / ".build/validator", explicit=True)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"python={python}\n")
+          PY
+
+      - name: Tests and validate
+        env:
+          PY: ${{ steps.runtime.outputs.python }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          "$PY" -m hermes_cli.main --version
+          bash .github/compat-check.sh

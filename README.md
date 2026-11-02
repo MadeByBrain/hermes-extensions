@@ -1,5 +1,7 @@
 # Hermes Extensions by MadeByBrain
 
+[![Hermes compatibility](https://github.com/MadeByBrain/hermes-extensions/actions/workflows/compat.yml/badge.svg)](https://github.com/MadeByBrain/hermes-extensions/actions/workflows/compat.yml)
+
 Free skills and plugins for [Hermes Agent](https://github.com/NousResearch/hermes-agent). MIT licensed.
 
 The `skills/` folder is a Hermes skill tap. Add it once and every skill in it becomes searchable and installable:
@@ -51,6 +53,10 @@ The skills and plugins here are free and stay free. Setups that connect Hermes t
 ## Contributing
 
 Issues and pull requests are welcome. Please do not include real customer data, tokens or account ids in examples.
+
+## Maintenance
+
+Checked every week against the latest Hermes Agent release (offline tests and `hermes plugins validate`), and on every change. Found a problem? Open an issue.
 
 ## License
 
