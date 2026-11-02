@@ -7,8 +7,8 @@
 set -uo pipefail
 : "${PY:?set PY to a Python with Hermes Agent installed}"
 fail=0
-home=$(mktemp -d)
-export HERMES_HOME="$home"
+work=$(mktemp -d)
+export HERMES_HOME="$work"
 
 plugins=()
 [ -f plugin.yaml ] && plugins+=(".")
@@ -24,15 +24,15 @@ for p in "${plugins[@]}"; do
       echo "::error::tests failed: $t"; fail=1
     fi
   done
-  if "$PY" -m hermes_cli.main plugins validate "$p" --json > "$home/validate.json" 2> "$home/validate.err"; then :; fi
-  if "$PY" - "$home/validate.json" <<'PY'
+  if "$PY" -m hermes_cli.main plugins validate "$p" --json > "$work/validate.json" 2> "$work/validate.err"; then :; fi
+  if "$PY" - "$work/validate.json" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))
 bad = [c["name"] for c in d.get("checks", []) if not c.get("ok")]
 print("validate:", "ok" if not bad and not d.get("warnings") else "FAILED", "| warnings:", d.get("warnings"), "| failed:", bad)
 sys.exit(1 if bad or d.get("warnings") else 0)
 PY
-  then :; else echo "::error::hermes plugins validate failed for $p"; cat "$home/validate.err"; fail=1; fi
+  then :; else echo "::error::hermes plugins validate failed for $p"; cat "$work/validate.err"; fail=1; fi
   echo "::endgroup::"
 done
 
@@ -58,5 +58,4 @@ PY
 done
 
 [ ${#plugins[@]} -gt 0 ] || ls -d skills/*/ >/dev/null 2>&1 || { echo "::error::nothing to check"; fail=1; }
-rm -rf "$home"
 exit $fail
