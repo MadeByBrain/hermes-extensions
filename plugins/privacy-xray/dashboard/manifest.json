@@ -1,0 +1,13 @@
+{
+  "name": "privacy-xray",
+  "label": "Privacy X-ray",
+  "description": "Live leak map: where your model requests went, which carried the canary, and the config fixes.",
+  "icon": "Shield",
+  "version": "1.0.0",
+  "tab": {
+    "path": "/privacy-xray",
+    "position": "end"
+  },
+  "entry": "dist/index.js",
+  "api": "plugin_api.py"
+}

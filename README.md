@@ -36,6 +36,7 @@ hermes plugins install MadeByBrain/hermes-extensions/plugins/writing-guard --ena
 | Plugin | What it does | Version |
 |---|---|---|
 | [writing-guard](plugins/writing-guard/README.md) | Style check for every Hermes answer in German and English: finds em and en dashes (optionally replaces them), reports stock AI phrases and mixed or switched du/Sie. Rule based, no model calls. | 1.0.1 |
+| [privacy-xray](plugins/privacy-xray/README.md) | Where does your data actually go? Records every outgoing model request (main loop and side tasks such as titles and compression) as metadata, traces a fictitious canary person, audits the config with exact fix commands and draws an HTML leak map. Local only, never stores message content. | 1.0.0 |
 
 Published plugins with their own repos:
 

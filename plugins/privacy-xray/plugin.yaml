@@ -1,0 +1,72 @@
+name: privacy-xray
+version: 1.0.0
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.22.7"
+description: "Where does your data actually go? Records every outgoing model request, main loop and side tasks such as titles and compression, as metadata only (destination, vendor HQ country, model vendor behind aggregators, detected personal data types). Traces a fictitious canary person through requests and local stores, audits the config with exact fix commands, searches local stores for a person and draws an HTML leak map. Local only, no network calls, never stores message content, never deletes anything."
+author: MadeByBrain
+license: MIT
+homepage: https://github.com/MadeByBrain/hermes-extensions/tree/main/plugins/privacy-xray
+tags: [privacy, gdpr, dsgvo, audit, data-flow, canary, pii, compliance-helper]
+provides_hooks:
+  - pre_api_request
+  - pre_auxiliary_call
+provides_middleware:
+  - llm_request
+provides_tools:
+  - privacy_xray
+config_schema:
+  language:
+    type: str
+    choices: [auto, en, de]
+    default: auto
+    label: "Language"
+    description: "auto = the Hermes display language (German if it starts with de, else English)."
+  record:
+    type: bool
+    default: true
+    label: "Record outgoing requests"
+    description: "Writes one line of metadata per model request to plugin-data/privacy-xray/ledger.jsonl. Never content."
+  detectors:
+    type: list
+    default: [email, iban, card, phone, ipv4, tax_id_de, vat_id_de]
+    label: "Detectors"
+    description: "Personal data types to count: email, iban, card, phone, ipv4, tax_id_de (German Steuer-ID), vat_id_de (German USt-IdNr)."
+  watch_terms:
+    type: list
+    default: []
+    label: "Watch terms"
+    description: "Your own names or words (client names, project code names). Counted in every request; masked by the guard."
+  home_region:
+    type: str
+    default: ""
+    label: "Home region"
+    description: "Optional, for example EU, EEA, DE or EU,CH. Main model vendors headquartered outside it are marked amber."
+  guard:
+    type: bool
+    default: false
+    label: "Guard: mask canary and watch terms"
+    description: "Masks canary values and watch terms (whole words) in the text of MAIN model requests before they are sent. Never touches tool names, ids, tool arguments or thinking blocks. Side requests (titles, compression, vision) cannot be changed by any plugin."
+  ledger_max_mb:
+    type: int
+    default: 5
+    label: "Ledger size (MB)"
+    description: "When the ledger reaches this size it is rotated once (ledger.1.jsonl); older lines are dropped."
+  map_turns:
+    type: int
+    default: 20
+    label: "Turns in /xray map"
+  scan_seconds:
+    type: int
+    default: 30
+    label: "Time budget for local store search (seconds)"
+  allow_sensitive_on_gateways:
+    type: bool
+    default: false
+    label: "Allow fix --yes and find on chat gateways"
+    description: "Off: /xray fix <id> --yes and /xray find run only on this machine (CLI, TUI, desktop app, dashboard). On: also from Telegram, Discord, Slack and other gateways, for everyone who can write to the bot."
+  wrap_width:
+    type: int
+    default: 0
+    label: "Line width in the terminal"
+    description: "CLI and TUI only: /xray output is wrapped at word boundaries at this width. 0 = this terminal's width when known, else 100."
