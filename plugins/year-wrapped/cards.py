@@ -1,4 +1,4 @@
-"""Story cards for hermes-wrapped: self-contained HTML, 1080 x 1920 each.
+"""Story cards for year-wrapped: self-contained HTML, 1080 x 1920 each.
 
 No external fonts, scripts or images: every file works offline and leaks nothing.
 Top 150 px and bottom 170 px hold no key content (story app overlays).
@@ -93,7 +93,7 @@ def persona_name(code: str, lang: str) -> str:
 
 T = {
     "en": {
-        "wrapped": "Hermes Wrapped", "all": "all time", "days": "last {d} days",
+        "wrapped": "Year Wrapped", "all": "all time", "days": "last {d} days",
         "cover_big": "{conv} with your agent.",
         "cover_sub": "{d} {days}. {m} {msgs} typed by you.",
         "cover_hook": "Let's see what that says about you.",
@@ -145,7 +145,7 @@ T = {
         "foot_local": "Counted locally. Nothing uploaded.",
     },
     "de": {
-        "wrapped": "Hermes Wrapped", "all": "gesamt", "days": "letzte {d} Tage",
+        "wrapped": "Year Wrapped", "all": "gesamt", "days": "letzte {d} Tage",
         "cover_big": "{conv} mit deinem Agenten.",
         "cover_sub": "{d} {days}. {m} {msgs} von dir getippt.",
         "cover_hook": "Mal sehen, was das über dich verrät.",
@@ -290,7 +290,7 @@ def page(title: str, css: str, body: str, foot_color: str = "") -> str:
 
 
 def foot(t: dict, period: str, style: str = "") -> str:
-    return (f'<div class="foot" style="{style}"><div><b>$ hermes wrapped</b><br>{e(period)}</div>'
+    return (f'<div class="foot" style="{style}"><div><b>$ hermes year-wrapped</b><br>{e(period)}</div>'
             f'<div class="r">{e(t["foot_local"])}<br>{e(REPO_HINT)}</div></div>')
 
 
@@ -311,7 +311,7 @@ def card_cover(st: Stats, t, lang, period, **_):
             f'{e(t["cover_sub"].format(d=fmt_int(st.active_days, lang), m=fmt_int(st.user_messages, lang), days=unit(lang, "day", st.active_days), msgs=unit(lang, "msg", st.user_messages)))}</div>'
             f'<div class="line" style="margin-top:110px;font-size:66px;font-weight:800">{e(t["cover_hook"])}</div>'
             f'{foot(t, period)}</div>')
-    return "cover", page("Hermes Wrapped", css, body)
+    return "cover", page("Year Wrapped", css, body)
 
 
 def card_persona(st: Stats, t, lang, period, **_):
@@ -673,7 +673,7 @@ def card_summary(st: Stats, t, lang, period, **_):
             + (f'<div class="big" style="font-size:{size}px;margin-top:50px;line-height:1.08">{emoji} {e(name)}</div>' if name else "")
             + f'<div class="grid">{grid}</div><div style="margin-top:50px">{fact_html}</div>'
             f'{foot(t, period, "color:#d4af37")}</div>')
-    return "summary", page("Hermes Wrapped summary", css, body)
+    return "summary", page("Year Wrapped summary", css, body)
 
 
 CARDS: list[Callable] = [card_cover, card_persona, card_tools, card_skill, card_manners, card_night,

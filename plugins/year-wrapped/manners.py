@@ -1,7 +1,7 @@
-"""Politeness and swear jar counting for hermes-wrapped.
+"""Politeness and swear jar counting for year-wrapped.
 
 The word lists, the cleaning rules and the ranks follow the manners-meter plugin
-(same maintainer, MIT). They are copied here on purpose so hermes-wrapped has no
+(same maintainer, MIT). They are copied here on purpose so year-wrapped has no
 dependency on another plugin. Standard library only.
 """
 from __future__ import annotations

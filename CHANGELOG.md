@@ -8,9 +8,9 @@ Repository: weekly compatibility check against the latest Hermes Agent release (
 
 First release of the plugin `privacy-xray`: where does your data actually go? Records every outgoing model request, main loop and side tasks such as titles and compression, as metadata only; traces a fictitious canary person through requests and local stores; audits the config with exact fix commands; searches local stores for a person; draws an HTML leak map, also live as a dashboard tab. Local only, no network calls, never stores message content, never deletes anything. Tested on Hermes v0.22.7 and v0.23.0. Details: [plugins/privacy-xray/CHANGELOG.md](plugins/privacy-xray/CHANGELOG.md).
 
-## hermes-wrapped-v1.0.0
+## year-wrapped-v1.0.0
 
-First release of the plugin `hermes-wrapped`: your year with your agent as shareable story cards. `hermes wrapped` reads state.db locally and read only and writes 13 cards (1080 x 1920) as HTML plus PNG when a headless Chrome is installed: persona (16 types from four axes), top tools, most used skill, manners and swear jar, night shift, longest chat, tokens, night crew, main model, projects and word of the year. Session titles hidden by default, no model calls, no network. Details: [plugins/hermes-wrapped/CHANGELOG.md](plugins/hermes-wrapped/CHANGELOG.md).
+First release of the plugin `year-wrapped`: your year with your agent as shareable story cards. `hermes year-wrapped` reads state.db locally and read only and writes 13 cards (1080 x 1920) as HTML plus PNG when a headless Chrome is installed: persona (16 types from four axes), top tools, most used skill, manners and swear jar, night shift, longest chat, tokens, night crew, main model, projects and word of the year. Session titles hidden by default, no model calls, no network. Details: [plugins/year-wrapped/CHANGELOG.md](plugins/year-wrapped/CHANGELOG.md).
 
 ## manners-meter-v1.0.0
 

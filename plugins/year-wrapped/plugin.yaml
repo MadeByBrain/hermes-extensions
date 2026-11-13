@@ -1,12 +1,12 @@
-name: hermes-wrapped
+name: year-wrapped
 version: 1.0.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.22.2"
-description: "Your year with your agent as shareable story cards. hermes wrapped reads state.db locally and read only, finds your persona (16 types), top tools and skills, longest chat, night shift, manners and swear jar, main model, projects and word of the year, and writes 1080x1920 cards as HTML plus PNG when a headless Chrome is installed. No model calls, no network."
+description: "Your year with your agent as shareable story cards. hermes year-wrapped reads state.db locally and read only, finds your persona (16 types), top tools and skills, longest chat, night shift, manners and swear jar, main model, projects and word of the year, and writes 1080x1920 cards as HTML plus PNG when a headless Chrome is installed. No model calls, no network."
 author: MadeByBrain
 license: MIT
-homepage: https://github.com/MadeByBrain/hermes-extensions/tree/main/plugins/hermes-wrapped
+homepage: https://github.com/MadeByBrain/hermes-extensions/tree/main/plugins/year-wrapped
 tags: [fun, stats, wrapped, year-in-review, share-card, persona, local-only]
 config_schema:
   language:

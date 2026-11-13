@@ -1,4 +1,4 @@
-"""Offline tests for hermes-wrapped. No network, no model, no browser.
+"""Offline tests for year-wrapped. No network, no model, no browser.
 
 Run:  python -m unittest discover -s tests -v      (from the plugin folder; Python 3.10+)
 """
@@ -23,16 +23,16 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
-HOME = Path(tempfile.mkdtemp(prefix="hermes-wrapped-test-"))
+HOME = Path(tempfile.mkdtemp(prefix="year-wrapped-test-"))
 atexit.register(shutil.rmtree, HOME, True)
 os.environ["HERMES_HOME"] = str(HOME)
 
-_spec = importlib.util.spec_from_file_location("hermes_wrapped_plugin", ROOT / "__init__.py",
+_spec = importlib.util.spec_from_file_location("year_wrapped_plugin", ROOT / "__init__.py",
                                                submodule_search_locations=[str(ROOT)])
 hw = importlib.util.module_from_spec(_spec)
-sys.modules["hermes_wrapped_plugin"] = hw
+sys.modules["year_wrapped_plugin"] = hw
 _spec.loader.exec_module(hw)
-from hermes_wrapped_plugin import cards, manners, render, stats, words  # noqa: E402
+from year_wrapped_plugin import cards, manners, render, stats, words  # noqa: E402
 
 UTC = dt.timezone.utc
 FENCE = "\x60" * 3
@@ -397,8 +397,8 @@ class TestCommands(Base):
     def test_register(self):
         ctx = FakeCtx()
         hw.register(ctx)
-        self.assertIn("wrapped", ctx.commands)
-        self.assertIn("wrapped", ctx.cli)
+        self.assertIn("year-wrapped", ctx.commands)
+        self.assertIn("year-wrapped", ctx.cli)
 
     def args(self, **kw):
         base = dict(year=2026, days=None, all=False, lang="en", tz="UTC", show_titles=False, out=None, no_png=True,
@@ -412,7 +412,7 @@ class TestCommands(Base):
         with redirect_stdout(buf):
             rc = hw._cli_handler(self.args())
         self.assertEqual(rc, 0)
-        d = HOME / "plugin-data" / "hermes-wrapped" / "2026"
+        d = HOME / "plugin-data" / "year-wrapped" / "2026"
         self.assertEqual(len(list(d.glob("[0-9][0-9]-*.html"))), 13)
         self.assertTrue((d / "index.html").is_file())
         self.assertIn("Session titles are hidden", buf.getvalue())
@@ -445,10 +445,10 @@ class TestCommands(Base):
     def test_slash_command(self):
         hw._ctx = FakeCtx({"language": "en", "timezone": "UTC"})
         out = hw.slash_wrapped("2026")
-        self.assertIn("Hermes Wrapped 2026", out)
+        self.assertIn("Year Wrapped 2026", out)
         self.assertIn("The Nocturnal Interrogator", out)
         self.assertIn("index.html", out)
-        self.assertIn("/wrapped 30", hw.slash_wrapped("help"))
+        self.assertIn("/year-wrapped 30", hw.slash_wrapped("help"))
         self.assertEqual(json.loads(hw.slash_wrapped("2026 json"))["cron_runs"], 2)
 
     def test_slash_never_raises(self):

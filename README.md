@@ -37,7 +37,7 @@ hermes plugins install MadeByBrain/hermes-extensions/plugins/writing-guard --ena
 |---|---|---|
 | [writing-guard](plugins/writing-guard/README.md) | Style check for every Hermes answer in German and English: finds em and en dashes (optionally replaces them), reports stock AI phrases and mixed or switched du/Sie. Rule based, no model calls. | 1.0.1 |
 | [privacy-xray](plugins/privacy-xray/README.md) | Where does your data actually go? Records every outgoing model request (main loop and side tasks such as titles and compression) as metadata, traces a fictitious canary person, audits the config with exact fix commands and draws an HTML leak map. Local only, never stores message content. | 1.0.0 |
-| [hermes-wrapped](plugins/hermes-wrapped/README.md) | Your year with your agent as shareable story cards: persona from 16 types, top tools and skills, night shift, manners, main model, projects and word of the year. HTML plus PNG, read only, no model calls. | 1.0.0 |
+| [year-wrapped](plugins/year-wrapped/README.md) | Your year with your agent as shareable story cards: persona from 16 types, top tools and skills, night shift, manners, main model, projects and word of the year. HTML plus PNG, read only, no model calls. | 1.0.0 |
 | [manners-meter](plugins/manners-meter/README.md) | How polite are you to your agent? Counts please and thank you in your own history, estimates what it cost in tokens, keeps a swear jar and writes a share card. Read only, no model calls. | 1.0.0 |
 
 Published plugins with their own repos:

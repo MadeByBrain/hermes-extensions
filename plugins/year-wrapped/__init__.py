@@ -1,11 +1,11 @@
-"""hermes-wrapped: your year with your agent, as shareable story cards.
+"""year-wrapped: your year with your agent, as shareable story cards.
 
 What it does
 ------------
-* ``hermes wrapped`` reads this profile's ``state.db`` (read only), prints a short summary and
+* ``hermes year-wrapped`` reads this profile's ``state.db`` (read only), prints a short summary and
   writes story cards (1080 x 1920) as self-contained HTML, plus PNG when a headless Chrome or
   Chromium is installed. ``index.html`` shows all cards side by side.
-* ``/wrapped`` (every surface) prints the same summary and writes the HTML cards.
+* ``/year-wrapped`` (every surface) prints the same summary and writes the HTML cards.
 
 Privacy
 -------
@@ -31,9 +31,9 @@ from . import render as _render
 from . import stats as _stats
 from . import words as _words
 
-logger = logging.getLogger("hermes.plugins.hermes_wrapped")
+logger = logging.getLogger("hermes.plugins.year_wrapped")
 
-PLUGIN_ID = "hermes-wrapped"
+PLUGIN_ID = "year-wrapped"
 DEFAULTS: dict[str, Any] = {
     "language": "auto",
     "timezone": "",
@@ -78,7 +78,7 @@ def _tz(name: str = ""):
             from zoneinfo import ZoneInfo
             return ZoneInfo(name), name
         except Exception:
-            logger.warning("hermes-wrapped: unknown timezone %r, using local time", name)
+            logger.warning("year-wrapped: unknown timezone %r, using local time", name)
     local = _dt.datetime.now().astimezone().tzinfo
     return local, str(local or "local")
 
@@ -130,7 +130,7 @@ def write_cards(st: _stats.Stats, *, lang: str, show_titles: bool = False, out: 
         for old in target.glob("[0-9][0-9]-*.*"):
             if old.name not in keep and old.suffix in (".html", ".png"):
                 old.unlink()
-    title = f"Hermes Wrapped {_cards.period_label(st, lang)}"
+    title = f"Year Wrapped {_cards.period_label(st, lang)}"
     (target / "index.html").write_text(_cards.gallery([p.name for p in files], title), encoding="utf-8")
     pngs: list[Path] = []
     browser = None
@@ -155,7 +155,7 @@ def write_cards(st: _stats.Stats, *, lang: str, show_titles: bool = False, out: 
 # ---------------------------------------------------------------------------------------
 
 SUMMARY = {
-    "en": {"head": "Hermes Wrapped {p}", "none": "No conversations in this period yet.",
+    "en": {"head": "Year Wrapped {p}", "none": "No conversations in this period yet.",
            "type": "Your type: {n} ({c})", "vol": "{s} {chats}, {m} {msgs} from you, {d} {days}",
            "tool": "Top tool: {t} ({n}x)", "skill": "Top skill: {t} ({n}x)", "model": "Main model: {t} ({n} chats)",
            "word": "Word of the year: {w} ({n} messages)", "polite": "Manners: {n}x polite, swear jar {j}",
@@ -165,7 +165,7 @@ SUMMARY = {
            "Chromium found, HTML only. Open index.html in a browser, or set browser_path.",
            "titles": "Session titles are hidden. Use --show-titles to show them.",
            "local": "Counted locally from state.db. Nothing left your machine."},
-    "de": {"head": "Hermes Wrapped {p}", "none": "In diesem Zeitraum gibt es noch keine Gespräche.",
+    "de": {"head": "Year Wrapped {p}", "none": "In diesem Zeitraum gibt es noch keine Gespräche.",
            "type": "Dein Typ: {n} ({c})", "vol": "{s} {chats}, {m} {msgs} von dir, {d} {days}",
            "tool": "Top-Tool: {t} ({n}x)", "skill": "Top-Skill: {t} ({n}x)", "model": "Hauptmodell: {t} ({n} Chats)",
            "word": "Wort des Jahres: {w} ({n} Nachrichten)", "polite": "Manieren: {n}x höflich, Schimpfglas {j}",
@@ -230,7 +230,7 @@ def _result_lines(res: dict, lang: str, show_titles: bool) -> list[str]:
 
 
 # ---------------------------------------------------------------------------------------
-# hermes wrapped
+# hermes year-wrapped
 # ---------------------------------------------------------------------------------------
 
 def _cli_setup(parser) -> None:
@@ -265,21 +265,21 @@ def _cli_handler(args) -> int:
         print("\n".join(_result_lines(res, lang, show)))
         return 0
     except Exception as exc:
-        logger.warning("hermes-wrapped failed: %s", exc)
-        print(f"hermes-wrapped: could not build your wrapped ({type(exc).__name__}: {exc}).")
+        logger.warning("year-wrapped failed: %s", exc)
+        print(f"year-wrapped: could not build your wrapped ({type(exc).__name__}: {exc}).")
         return 1
 
 
 # ---------------------------------------------------------------------------------------
-# /wrapped
+# /year-wrapped
 # ---------------------------------------------------------------------------------------
 
-USAGE = ("/wrapped            this year: summary and HTML cards\n"
-         "/wrapped 2025       a calendar year\n"
-         "/wrapped 30         the last 30 days\n"
-         "/wrapped all        the whole history\n"
-         "/wrapped json       raw numbers\n"
-         "PNG cards: run 'hermes wrapped' in a terminal.")
+USAGE = ("/year-wrapped        this year: summary and HTML cards\n"
+         "/year-wrapped 2025   a calendar year\n"
+         "/year-wrapped 30     the last 30 days\n"
+         "/year-wrapped all    the whole history\n"
+         "/year-wrapped json   raw numbers\n"
+         "PNG cards: run 'hermes year-wrapped' in a terminal.")
 
 
 def slash_wrapped(raw_args: str = "", **_kw) -> str:
@@ -304,17 +304,17 @@ def slash_wrapped(raw_args: str = "", **_kw) -> str:
             text += "\n" + "\n".join(_result_lines(res, lang, show))
         return text
     except Exception as exc:  # never break the chat
-        logger.warning("hermes-wrapped: /wrapped failed: %s", exc)
-        return f"hermes-wrapped: could not read the history ({type(exc).__name__})."
+        logger.warning("year-wrapped: /year-wrapped failed: %s", exc)
+        return f"year-wrapped: could not read the history ({type(exc).__name__})."
 
 
 def register(ctx) -> None:
     global _ctx
     _ctx = ctx
-    ctx.register_command("wrapped", slash_wrapped,
+    ctx.register_command("year-wrapped", slash_wrapped,
                          description="Your year with your agent: summary and story cards from your own history",
                          args_hint="[2026|30|all|json]")
-    ctx.register_cli_command("wrapped", "Your year with your agent as shareable story cards",
+    ctx.register_cli_command("year-wrapped", "Your year with your agent as shareable story cards",
                              _cli_setup, _cli_handler,
                              description="Reads state.db locally (read only) and writes story cards, 1080x1920, "
                                          "as HTML plus PNG when a headless Chrome is installed.")

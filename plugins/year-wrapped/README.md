@@ -1,8 +1,8 @@
-# hermes-wrapped: your year with your agent
+# year-wrapped: your year with your agent
 
-![hermes-wrapped: story cards from your own Hermes history](docs/banner.png)
+![year-wrapped: story cards from your own Hermes history](docs/banner.png)
 
-Spotify has Wrapped. Your agent has a year too. `hermes wrapped` reads your own Hermes history and turns it into colourful story cards (1080 x 1920) you can post:
+Spotify has Wrapped. Your agent has a year too. `hermes year-wrapped` reads your own Hermes history and turns it into colourful story cards (1080 x 1920) you can post:
 
 | Card | What it shows |
 |---|---|
@@ -24,6 +24,10 @@ Spotify has Wrapped. Your agent has a year too. `hermes wrapped` reads your own 
 
 Cards are self-contained HTML. When a headless Chrome or Chromium is installed, PNG files are rendered too. Everything is counted locally and read only. No model calls, no network, no telemetry.
 
+## Not to be confused with
+
+[hermes-wrapped](https://github.com/devpras22/hermes-wrapped) by devpras22 turns your week with Hermes into a 30 second video every Sunday. year-wrapped is the yearly, card based counterpart: static story cards, no video renderer, no cron job. Both can be installed side by side.
+
 ## Who it is for
 
 - **Everyone who uses Hermes every day** and wants to see what that looks like after a year.
@@ -32,7 +36,7 @@ Cards are self-contained HTML. When a headless Chrome or Chromium is installed, 
 
 ## Beyond this plugin
 
-hermes-wrapped is free and stays free. Real usage reviews for a company need its own data and roles, so they are not a public plugin:
+year-wrapped is free and stays free. Real usage reviews for a company need its own data and roles, so they are not a public plugin:
 
 - dashboards across all users and profiles of a company instance;
 - cost reports from the provider bills instead of estimates;
@@ -43,7 +47,7 @@ hermes-wrapped is free and stays free. Real usage reviews for a company need its
 ## Install
 
 ```bash
-hermes plugins install MadeByBrain/hermes-extensions/plugins/hermes-wrapped --enable
+hermes plugins install MadeByBrain/hermes-extensions/plugins/year-wrapped --enable
 ```
 
 Pin a release with `--ref <40 character commit SHA>` (tags are not accepted by `--ref`).
@@ -51,27 +55,27 @@ Pin a release with `--ref <40 character commit SHA>` (tags are not accepted by `
 ## Use it
 
 ```bash
-hermes wrapped                       # this calendar year
-hermes wrapped --year 2026
-hermes wrapped --days 30
-hermes wrapped --all
-hermes wrapped --lang de             # en or de; default: setting, then auto
-hermes wrapped --tz Europe/Berlin    # hours and days in your timezone
-hermes wrapped --show-titles         # show the session title on the marathon card
-hermes wrapped --rename acme=Northstar   # show a word under a code name (repeatable)
-hermes wrapped --out ~/wrapped       # write the cards somewhere else
-hermes wrapped --no-png              # HTML only
-hermes wrapped --json                # raw numbers, no cards
+hermes year-wrapped                          # this calendar year
+hermes year-wrapped --year 2026
+hermes year-wrapped --days 30
+hermes year-wrapped --all
+hermes year-wrapped --lang de                # en or de; default: setting, then auto
+hermes year-wrapped --tz Europe/Berlin       # hours and days in your timezone
+hermes year-wrapped --show-titles            # show the session title on the marathon card
+hermes year-wrapped --rename acme=Northstar  # show a word under a code name (repeatable)
+hermes year-wrapped --out ~/wrapped          # write the cards somewhere else
+hermes year-wrapped --no-png                 # HTML only
+hermes year-wrapped --json                   # raw numbers, no cards
 ```
 
-Cards land in `<HERMES_HOME>/plugin-data/hermes-wrapped/<year>/` as `01-cover.html`, `01-cover.png` and so on, plus `index.html` with all cards side by side.
+Cards land in `<HERMES_HOME>/plugin-data/year-wrapped/<year>/` as `01-cover.html`, `01-cover.png` and so on, plus `index.html` with all cards side by side.
 
-In any chat, `/wrapped` prints the summary and writes the HTML cards (`/wrapped 2025`, `/wrapped 30`, `/wrapped all`, `/wrapped json`). PNG rendering is left to the terminal command, so a chat never starts a browser.
+In any chat, `/year-wrapped` prints the summary and writes the HTML cards (`/year-wrapped 2025`, `/year-wrapped 30`, `/year-wrapped all`, `/year-wrapped json`). PNG rendering is left to the terminal command, so a chat never starts a browser.
 
 Example summary (one real history, German setting):
 
 ```text
-Hermes Wrapped 2026
+Year Wrapped 2026
 890 Chats, 7.609 Nachrichten von dir, 124 aktive Tage
 Dein Typ: Der gesprächige Bauleiter (DAY·BLD·CHT·MLT)
 Top-Tool: terminal (34.838x)
@@ -129,7 +133,7 @@ Four axes, each decided by a real share from your history. The persona card prin
 
 ## Settings
 
-Set with `hermes config set plugins.entries.hermes-wrapped.settings.<key> <value>` or in the Desktop plugin settings.
+Set with `hermes config set plugins.entries.year-wrapped.settings.<key> <value>` or in the Desktop plugin settings.
 
 | Key | Default | What it does |
 |---|---|---|
@@ -144,7 +148,7 @@ Set with `hermes config set plugins.entries.hermes-wrapped.settings.<key> <value
 ## Data and privacy
 
 - Reads `state.db` (and `projects.db` if present) of the active profile **read only** (`mode=ro`). Never writes to them.
-- Writes only the cards, by default under `<HERMES_HOME>/plugin-data/hermes-wrapped/`. Before writing, old cards of the same period in that folder are replaced. With `--out` nothing else in the folder is touched.
+- Writes only the cards, by default under `<HERMES_HOME>/plugin-data/year-wrapped/`. Before writing, old cards of the same period in that folder are replaced. With `--out` nothing else in the folder is touched.
 - No network, no model calls, no telemetry. The cards load no fonts, scripts or images from anywhere.
 - **Session titles are hidden by default.** They often name clients or projects. `--show-titles` shows one title, on the marathon card.
 - **Check the word of the year before you post.** It is a word you typed, and that can be a client or project name. Exclude such words with `exclude_words`, or show them under a code name with `rename_words` / `--rename`. The preview above uses this for one client name.
@@ -154,9 +158,9 @@ Set with `hermes config set plugins.entries.hermes-wrapped.settings.<key> <value
 
 - 41 offline tests (filters, time windows, timezones, persona axes, tools, skills, projects, word of the year, singular and plural, escaping, read only access, index use, empty and old database schemas, CLI, slash command).
 - `hermes plugins validate --json`: no warnings.
-- Live in an isolated Hermes home (Hermes Agent v0.23.0, Claude Haiku 4.5 over OpenRouter): plugin installed from a local Git checkout of this folder, three real chat turns, then `hermes wrapped` and `/wrapped` through the real plugin manager against that new history; 10 cards written, 10 PNG rendered.
+- Live in an isolated Hermes home (Hermes Agent v0.23.0, Claude Haiku 4.5 over OpenRouter): plugin installed from a local Git checkout of this folder, three real chat turns, then `hermes year-wrapped` and `/year-wrapped` through the real plugin manager against that new history; 10 cards written, 10 PNG rendered.
 - One real history (1.7 GB `state.db`, about 7,600 typed messages, 11,700 cron sessions): numbers in about 2 seconds with a warm disk cache (about 20 seconds on a cold first read), 13 PNG cards in about 9 seconds more.
-- Not tested yet: macOS and Windows (browser search covers the usual install paths), and `/wrapped` on Telegram, Discord and Desktop (same code path, not seen live).
+- Not tested yet: macOS and Windows (browser search covers the usual install paths), and `/year-wrapped` on Telegram, Discord and Desktop (same code path, not seen live).
 
 ## License
 
