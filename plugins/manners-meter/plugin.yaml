@@ -1,0 +1,51 @@
+name: manners-meter
+version: 1.0.0
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.22.2"
+description: "How polite are you to your agent? Counts please, thank you, bitte, danke and friends in the messages you typed, estimates what your politeness cost in tokens, and keeps a swear jar. /manners and hermes manners, plus a share card (HTML, 1080x1920). Read only, no model calls, no network."
+author: MadeByBrain
+license: MIT
+homepage: https://github.com/MadeByBrain/hermes-extensions/tree/main/plugins/manners-meter
+tags: [fun, stats, politeness, swear-jar, share-card, german, pre_llm_call]
+provides_hooks:
+  - pre_llm_call
+config_schema:
+  language:
+    type: str
+    choices: [auto, en, de]
+    default: auto
+    label: "Language"
+    description: "auto = the language you are polite in most."
+  jar_reactions:
+    type: bool
+    default: true
+    label: "Agent reacts to the swear jar"
+    description: "When your message contains a swear word, a short note with the jar count is added to that message so the agent may answer with one dry line. Off = counting only."
+  jar_price:
+    type: float
+    default: 1.0
+    label: "Price per swear word"
+  currency:
+    type: str
+    default: ""
+    label: "Currency symbol"
+    description: "Empty = € for German, $ for English."
+  price_per_mtok:
+    type: float
+    default: 3.0
+    label: "Input price per million tokens (USD)"
+    description: "Only used for the uncached upper bound of the politeness cost."
+  extra_polite:
+    type: list
+    default: []
+    label: "Extra polite words"
+  extra_swear:
+    type: list
+    default: []
+    label: "Extra swear words"
+  excluded_sources:
+    type: list
+    default: [cron, subagent, kanban, batch, webhook, tool]
+    label: "Ignore messages from"
+    description: "Sessions from these sources are written by machines, not by you."

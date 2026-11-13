@@ -1,0 +1,47 @@
+name: hermes-wrapped
+version: 1.0.0
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.22.2"
+description: "Your year with your agent as shareable story cards. hermes wrapped reads state.db locally and read only, finds your persona (16 types), top tools and skills, longest chat, night shift, manners and swear jar, main model, projects and word of the year, and writes 1080x1920 cards as HTML plus PNG when a headless Chrome is installed. No model calls, no network."
+author: MadeByBrain
+license: MIT
+homepage: https://github.com/MadeByBrain/hermes-extensions/tree/main/plugins/hermes-wrapped
+tags: [fun, stats, wrapped, year-in-review, share-card, persona, local-only]
+config_schema:
+  language:
+    type: str
+    choices: [auto, en, de]
+    default: auto
+    label: "Language"
+    description: "auto = the language you are polite in most."
+  timezone:
+    type: str
+    default: ""
+    label: "Timezone"
+    description: "IANA name such as Europe/Berlin for hours and days. Empty = the system time of this machine."
+  show_titles:
+    type: bool
+    default: false
+    label: "Show session titles on cards"
+    description: "Off by default, because titles often name clients or projects."
+  exclude_words:
+    type: list
+    default: []
+    label: "Words never shown as word of the year"
+    description: "For example client or project names."
+  rename_words:
+    type: list
+    default: []
+    label: "Words shown under another name"
+    description: "Entries like client=Codename. The word of the year then shows the code name instead."
+  excluded_sources:
+    type: list
+    default: [cron, subagent, kanban, batch, webhook, tool]
+    label: "Not counted as your chats"
+    description: "Sessions from these sources are written by machines, not by you. Cron runs still appear on the night crew card."
+  browser_path:
+    type: str
+    default: ""
+    label: "Headless browser for PNG"
+    description: "Empty = search for Chrome, Chromium, Edge, Brave or a Playwright headless shell."
