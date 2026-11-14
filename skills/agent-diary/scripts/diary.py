@@ -30,7 +30,16 @@ from collections import Counter
 from pathlib import Path
 from typing import Optional
 
-VERSION = "1.0.1"
+try:
+    from itertools import pairwise
+except ImportError:  # Python 3.9, still the system python3 on some Macs
+
+    def pairwise(items):
+        items = list(items)
+        return zip(items, items[1:])
+
+
+VERSION = "1.0.2"
 
 # Background work is not "the day with the user". oneshot = scripted hermes chat -q runs.
 EXCLUDED_SOURCES = tuple(x.strip() for x in os.environ.get(
@@ -61,7 +70,7 @@ def _config_timezone() -> str:
         raw = (hermes_home() / "config.yaml").read_text(encoding="utf-8", errors="replace")
     except OSError:
         return ""
-    m = re.search(r"^timezone:[ \t]{0,8}['\"]?([A-Za-z_]{1,32}(?:/[A-Za-z0-9_+\-]{1,32}){0,2})", raw, re.M)
+    m = re.search(r"^timezone:[ \t]{0,8}['\"]?([A-Za-z_]{1,32}(?:/[A-Za-z0-9_+\-]{1,32}){0,2})", raw, re.MULTILINE)
     return m.group(1) if m else ""
 
 
@@ -71,8 +80,8 @@ def _tz(name: str):
         try:
             from zoneinfo import ZoneInfo
             return ZoneInfo(name), name
-        except Exception:
-            pass
+        except (ImportError, KeyError, ValueError) as exc:  # unknown zone: fall back to local time
+            sys.stderr.write(f"agent-diary: unknown timezone {name!r} ({type(exc).__name__}), using local time\n")
     local = _dt.datetime.now().astimezone().tzinfo
     return local, str(local or "local")
 
@@ -102,15 +111,15 @@ def _ro(db: Path) -> sqlite3.Connection:
 
 
 def _cols(con: sqlite3.Connection, table: str) -> set[str]:
-    return {r[1] for r in con.execute("PRAGMA table_info(%s)" % table)}
+    return {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
 
 
 # ---------------------------------------------------------------------------
 # Text cleaning: only what the user really typed counts
 # ---------------------------------------------------------------------------
 
-_FENCE = re.compile("\x60{3}.*?(?:\x60{3}|$)", re.S)
-_QUOTE = re.compile(r"^[ \t]{0,8}>.*$", re.M)
+_FENCE = re.compile("\x60{3}.*?(?:\x60{3}|$)", re.DOTALL)
+_QUOTE = re.compile(r"^[ \t]{0,8}>.*$", re.MULTILINE)
 _DROP_MESSAGE = ("[system", "[skill", "[context", "<system", "[important:", "[async delegation",
                  "[your active task list", "[ide")
 _DROP_LINE = _DROP_MESSAGE + ("[workspace::", "[out-of-band", "[/out-of-band", "[attached", "[the user sent",
@@ -138,19 +147,19 @@ def _one_line(text: str, limit: int = SNIPPET_MAX) -> str:
 
 _W = r"(?<![\w])"
 POLITE = re.compile(_W + r"(?:bitte|danke|dankesch(?:ö|oe)n|please|pls|plz|thanks|thank\s{1,3}you|thx|"
-                    r"merci|gracias|por\s{1,3}favor)(?![\w])", re.I)
+                    r"merci|gracias|por\s{1,3}favor)(?![\w])", re.IGNORECASE)
 SWEAR = re.compile(_W + r"(?:fuck(?:ing|ed|er|s)?|wtf|ffs|shit(?:ty|s)?|bullshit|damn(?:it)?|crap(?:py)?|"
-                   r"schei(?:ß|ss)(?:e|dreck|ding)?|verdammt(?:e|er|es)?|mist|kacke)(?![\w])", re.I)
+                   r"schei(?:ß|ss)(?:e|dreck|ding)?|verdammt(?:e|er|es)?|mist|kacke)(?![\w])", re.IGNORECASE)
 # A message that opens like a correction or a complaint.
 CORRECTION = re.compile(r"^[ \t]{0,4}(?:nein|ne[,!.]|nope|no[,!.]|no\s|falsch|wrong|again|nochmal|noch\s{1,3}mal|"
                         r"immer\s{1,3}noch|still\s{1,3}(?:not|doesn|broken|wrong)|that'?s\s{1,3}not|"
                         r"das\s{1,3}(?:ist|war)\s{1,3}(?:nicht|falsch)|doesn'?t\s{1,3}work|geht\s{1,3}nicht|"
                         r"funktioniert\s{1,3}nicht|klappt\s{1,3}nicht|stop|halt|warum\s{1,3}hast\s{1,3}du|"
-                        r"why\s{1,3}did\s{1,3}you|wieso|you\s{1,3}forgot|du\s{1,3}hast\s{1,3}vergessen)", re.I)
+                        r"why\s{1,3}did\s{1,3}you|wieso|you\s{1,3}forgot|du\s{1,3}hast\s{1,3}vergessen)", re.IGNORECASE)
 # The agent admitting something, first 600 characters of a reply only.
 ADMISSION = re.compile(_W + r"(?:you'?re\s{1,3}right|you\s{1,3}are\s{1,3}right|du\s{1,3}hast\s{1,3}recht|"
                        r"my\s{1,3}mistake|my\s{1,3}bad|mein\s{1,3}fehler|i\s{1,3}apologi[sz]e|good\s{1,3}catch|"
-                       r"guter\s{1,3}punkt|stimmt,|da\s{1,3}hast\s{1,3}du\s{1,3}recht|sorry)(?![\w])", re.I)
+                       r"guter\s{1,3}punkt|stimmt,|da\s{1,3}hast\s{1,3}du\s{1,3}recht|sorry)(?![\w])", re.IGNORECASE)
 _LETTER = re.compile(r"[A-Za-zÄÖÜäöüß]")
 
 
@@ -162,8 +171,8 @@ def _is_shout(text: str) -> bool:
     return upper / len(letters) > 0.7
 
 
-_DE = re.compile(r"(?<![\w])(?:und|nicht|ich|das|ist|bitte|danke|der|die|mit|hab|mach|wir|du|auch|noch)(?![\w])", re.I)
-_EN = re.compile(r"(?<![\w])(?:and|not|the|is|please|thanks|with|you|this|what|can|it|do)(?![\w])", re.I)
+_DE = re.compile(r"(?<![\w])(?:und|nicht|ich|das|ist|bitte|danke|der|die|mit|hab|mach|wir|du|auch|noch)(?![\w])", re.IGNORECASE)
+_EN = re.compile(r"(?<![\w])(?:and|not|the|is|please|thanks|with|you|this|what|can|it|do)(?![\w])", re.IGNORECASE)
 
 
 def _guess_lang(texts: list[str]) -> str:
@@ -302,7 +311,7 @@ def collect_facts(day: _dt.date, tz, tz_name: str, home: Optional[Path] = None) 
 
 
 def _longest_gap(user_msgs) -> int:
-    gaps = [b[0] - a[0] for a, b in zip(user_msgs, user_msgs[1:])]
+    gaps = [b[0] - a[0] for a, b in pairwise(user_msgs)]
     return int(max(gaps) // 60) if gaps else 0
 
 
@@ -342,7 +351,7 @@ def _streak(day: _dt.date) -> int:
 # Entries
 # ---------------------------------------------------------------------------
 
-_FRONT = re.compile(r"\A---\n(.*?)\n---\n?", re.S)
+_FRONT = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 
 
 def read_entry(path: Path) -> dict:
@@ -392,7 +401,7 @@ def check_line(line: str, facts: Optional[dict] = None) -> list[str]:
     """Warnings for a share line. It goes on a public card, so it must not identify anyone."""
     warns = []
     if len(line) > LINE_MAX:
-        warns.append("too_long: %d characters, keep it under %d" % (len(line), LINE_MAX))
+        warns.append(f"too_long: {len(line)} characters, keep it under {LINE_MAX}")
     if re.search(r"https?://|www\.|\S+@\S+\.\w", line):
         warns.append("contains_link_or_email")
     if re.search(r"\d{5,}", line):
@@ -646,7 +655,40 @@ def _print(obj) -> None:
     sys.stdout.write(json.dumps(obj, ensure_ascii=False, indent=1) + "\n")
 
 
-def main(argv=None) -> int:
+def _cmd_facts(a, tz, tz_name) -> int:
+    _print(collect_facts(_day(a.date, tz), tz, tz_name))
+    return 0
+
+
+def _cmd_save(a, tz, tz_name) -> int:
+    day = _day(a.date, tz)
+    body = Path(a.src).read_text(encoding="utf-8") if a.src else sys.stdin.read()
+    facts = collect_facts(day, tz, tz_name)
+    _print(save_entry(day.isoformat(), a.line, a.title, body, facts if facts.get("ok") else None))
+    return 0
+
+
+def _cmd_card(a, tz, _tz_name) -> int:
+    _print(render_card(_day(a.date, tz).isoformat(), a.lang, a.theme))
+    return 0
+
+
+def _cmd_recent(a, _tz, _tz_name) -> int:
+    _print({"ok": True, "entries": recent_entries(max(1, a.n))})
+    return 0
+
+
+def _cmd_check(a, tz, tz_name) -> int:
+    facts = collect_facts(_day(a.date, tz), tz, tz_name) if a.date else None
+    w = check_line(a.line, facts)
+    _print({"ok": not w, "warnings": w})
+    return 0
+
+
+COMMANDS = {"facts": _cmd_facts, "save": _cmd_save, "card": _cmd_card, "recent": _cmd_recent, "check": _cmd_check}
+
+
+def _parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="diary.py", description="agent-diary helper")
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("facts")
@@ -669,29 +711,19 @@ def main(argv=None) -> int:
     k.add_argument("--line", required=True)
     k.add_argument("--date", default="")
     k.add_argument("--tz", default="")
-    a = ap.parse_args(argv)
+    return ap
+
+
+def main(argv=None) -> int:
+    a = _parser().parse_args(argv)
     try:
         tz, tz_name = _tz(getattr(a, "tz", ""))
-        if a.cmd == "facts":
-            _print(collect_facts(_day(a.date, tz), tz, tz_name))
-        elif a.cmd == "save":
-            day = _day(a.date, tz)
-            body = Path(a.src).read_text(encoding="utf-8") if a.src else sys.stdin.read()
-            facts = collect_facts(day, tz, tz_name)
-            _print(save_entry(day.isoformat(), a.line, a.title, body, facts if facts.get("ok") else None))
-        elif a.cmd == "card":
-            _print(render_card(_day(a.date, tz).isoformat(), a.lang, a.theme))
-        elif a.cmd == "recent":
-            _print({"ok": True, "entries": recent_entries(max(1, a.n))})
-        elif a.cmd == "check":
-            facts = collect_facts(_day(a.date, tz), tz, tz_name) if a.date else None
-            w = check_line(a.line, facts)
-            _print({"ok": not w, "warnings": w})
-    except Exception as exc:  # the agent gets a clear message instead of a traceback
+        return COMMANDS[a.cmd](a, tz, tz_name)
+    except (OSError, sqlite3.Error, ValueError, KeyError, subprocess.SubprocessError) as exc:
+        # The agent gets a clear JSON message instead of a traceback.
         _print({"ok": False, "error": type(exc).__name__ + ": " + str(exc)[:300],
                 "next_step": "Report this error to the user. Do not invent facts."})
         return 1
-    return 0
 
 
 if __name__ == "__main__":

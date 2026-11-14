@@ -23,7 +23,7 @@ Skills from a tap run through the Hermes security scan on install and are marked
 
 | Skill | What it does | Version |
 |---|---|---|
-| [agent-diary](docs/skills/agent-diary.md) | Your agent keeps a diary: every evening a short, deadpan entry about its day with you, from your local session history, plus a share card with the best line. Names stay out of the diary and off the card. Stdlib only. | 1.0.1 |
+| [agent-diary](docs/skills/agent-diary.md) | Your agent keeps a diary: every evening a short, deadpan entry about its day with you, from your local session history, plus a share card with the best line. Names stay out of the diary and off the card. Stdlib only. | 1.0.2 |
 | [zoho-one](docs/skills/zoho-one.md) | Zoho CRM, Mail and WorkDrive over REST in every Zoho region: upsert records, reply in the mail thread, upload files with a SHA-256 check. Stdlib only, no third-party gateway. | 1.0.2 |
 
 ## Plugins

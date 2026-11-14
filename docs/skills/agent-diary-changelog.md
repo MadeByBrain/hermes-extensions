@@ -1,5 +1,10 @@
 # Changelog: agent-diary
 
+## agent-diary-v1.0.2
+
+- Helper follows the Hermes Agent lint and code health rules (narrow exception handling, command table instead of an if/elif chain, no regex flag aliases). No change in behaviour.
+- Tested with Python 3.9 as well (system python3 on some Macs).
+
 ## agent-diary-v1.0.1
 
 - No names in the diary at all: companies, clients, people, products, brands, websites and projects are now banned from the private entry too, not only from the share line. `save` reports brand-like words in the entry (CamelCase, domains, capitalized words from today's session titles) as `check_names_in_entry`.

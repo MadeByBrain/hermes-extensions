@@ -4,6 +4,10 @@ Each entry has its own changelog and tags (`<name>-vX.Y.Z`). Release notes are t
 
 Repository: weekly compatibility check against the latest Hermes Agent release (GitHub Actions, `.github/workflows/compat.yml`), no change to any entry.
 
+## agent-diary-v1.0.2
+
+`agent-diary`: helper cleaned up for the Hermes Agent lint and code health rules, tested on Python 3.9 too, no change in behaviour. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
+
 ## agent-diary-v1.0.1
 
 `agent-diary`: no names anywhere in the diary (companies, clients, people, products, brands, websites, projects), checked in the entry as well as in the share line; whole-day counts are no longer tied to a time window. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
