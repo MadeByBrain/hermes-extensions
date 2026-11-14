@@ -35,8 +35,13 @@ try:
 except ImportError:  # Python 3.9, still the system python3 on some Macs
 
     def pairwise(items):
-        items = list(items)
-        return zip(items, items[1:])
+        it = iter(items)
+        prev = next(it, _END)
+        for cur in it:
+            yield prev, cur
+            prev = cur
+
+_END = object()
 
 
 VERSION = "1.0.2"
