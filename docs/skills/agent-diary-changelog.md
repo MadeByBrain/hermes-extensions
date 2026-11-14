@@ -1,5 +1,10 @@
 # Changelog: agent-diary
 
+## agent-diary-v1.0.1
+
+- No names in the diary at all: companies, clients, people, products, brands, websites and projects are now banned from the private entry too, not only from the share line. `save` reports brand-like words in the entry (CamelCase, domains, capitalized words from today's session titles) as `check_names_in_entry`.
+- Counts for the whole day (background jobs, subagents) are no longer placed inside a silence or another time window.
+
 ## agent-diary-v1.0.0
 
 First release.

@@ -39,7 +39,7 @@ This is an English rendering of a real entry the skill wrote during testing (the
 
 - The diary stays on your machine. The helper makes no network calls; the entry is written by the model you already use, from facts it reads in your own Hermes.
 - The card is meant to be public, so the share line must not name anyone. The helper checks every share line and flags words that also appear in today's chats (people, clients, companies, projects), links, e-mail addresses, long numbers and dashes. The agent rewrites flagged lines.
-- Session titles and message samples are input for the agent only. The skill tells it to describe work in general terms and never to quote secrets, amounts or more than about ten words.
+- Session titles and message samples are input for the agent only. No names of companies, clients, people, products or projects appear in the diary at all; the helper flags brand-like words in the entry and the agent replaces them with general terms. It never quotes secrets, amounts or more than about ten words.
 
 ## Settings
 
@@ -59,8 +59,8 @@ One model call chain per day: in testing a nightly run took 6 tool calls and abo
 
 ## Tested
 
-- 17 offline tests (`tests/agent-diary/`), Hermes security scan `safe`, skill linter without findings.
-- Live on Hermes Agent v0.23.0 against a real session history (read only, isolated test home): one run with Claude Opus, one with DeepSeek V4 Pro through OpenRouter. Every number in the entries matched the facts. The cron delivery to Telegram uses Hermes' standard `MEDIA:` attachment path and was not part of the live test.
+- 18 offline tests (`tests/agent-diary/`), Hermes security scan `safe`, skill linter without findings.
+- Live on Hermes Agent v0.23.0 against a real session history (read only, isolated test home): one run with Claude Opus, one with DeepSeek V4 Pro through OpenRouter. Every number in the entries matched the facts. A cron run delivered entry and card to Telegram through Hermes' standard `MEDIA:` attachment path.
 
 ## Beyond this skill
 

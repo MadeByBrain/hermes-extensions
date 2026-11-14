@@ -30,7 +30,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Optional
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 # Background work is not "the day with the user". oneshot = scripted hermes chat -q runs.
 EXCLUDED_SOURCES = tuple(x.strip() for x in os.environ.get(
@@ -252,6 +252,7 @@ def collect_facts(day: _dt.date, tz, tz_name: str, home: Optional[Path] = None) 
     vocab = {w.lower() for t in texts for w in re.findall(r"[\w\-]{3,}", t)}
     vocab |= {w.lower() for s in sessions.values() for w in re.findall(r"[\w\-]{3,}", s["title"])}
     out["_vocab"] = vocab
+    out["_title_vocab"] = {w.lower() for s in sessions.values() for w in re.findall(r"[\w\-]{3,}", s["title"])}
     active = {sid: s for sid, s in sessions.items() if s["user"]}
     polite = sum(len(POLITE.findall(t)) for t in texts)
     swears = sum(len(SWEAR.findall(t)) for t in texts)
@@ -409,11 +410,32 @@ def check_line(line: str, facts: Optional[dict] = None) -> list[str]:
     return warns
 
 
+_BRANDISH = re.compile(r"(?<![\w@])(?:[A-Za-zÄÖÜäöü]{1,30}[a-zäöü][A-Z][\w]{1,30}|[A-Za-z][\w\-]{1,40}\.(?:com|de|io|ai|net|org|co|app)\b|"
+                       r"[A-Z]{2,}[a-z]{2,}[\w]{0,20})")
+
+
+def check_body(body: str, facts: Optional[dict] = None) -> list[str]:
+    """Words in the entry that look like names of companies, clients, products or projects.
+
+    Candidates: brand-like spellings (CamelCase, domains) anywhere, and capitalized words that also
+    appear in today's session titles (titles carry project and client names)."""
+    hits = set(m.group(0) for m in _BRANDISH.finditer(body))
+    titles = (facts or {}).get("_title_vocab") or set()
+    if titles:
+        hits |= {w for w in _CAP_WORD.findall(body) if w.lower() in titles and w.lower() not in _COMMON}
+    hits = sorted(h for h in hits if h.lower() not in _COMMON)
+    if not hits:
+        return []
+    return ["check_names_in_entry: " + ", ".join(hits[:12]) + ". Names of companies, clients, people, products, "
+            "brands, websites and projects never appear in the diary. Replace each one that is such a name with a "
+            "general description (a client, a directory, a sale) and save again."]
+
+
 def save_entry(date_s: str, line: str, title: str, body: str, facts: Optional[dict]) -> dict:
     if not body.strip():
         return {"ok": False, "error": "empty entry", "next_step": "Pass the entry text on stdin or with --from."}
     line = " ".join(line.split())
-    warns = check_line(line, facts)
+    warns = check_line(line, facts) + check_body(body, facts)
     d = diary_dir()
     d.mkdir(parents=True, exist_ok=True)
     try:
@@ -438,7 +460,7 @@ def save_entry(date_s: str, line: str, title: str, body: str, facts: Optional[di
     os.chmod(tmp, 0o600)
     os.replace(tmp, path)
     return {"ok": True, "path": str(path), "line_warnings": warns,
-            "next_step": ("Read line_warnings, fix the share line if needed and save again." if warns
+            "next_step": ("Read line_warnings, fix the share line or the entry and save again." if warns
                           else "Render the card.")}
 
 

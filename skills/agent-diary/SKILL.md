@@ -1,7 +1,7 @@
 ---
 name: agent-diary
 description: Write a nightly diary entry about your day with the user.
-version: 1.0.0
+version: 1.0.1
 author: MadeByBrain
 license: MIT
 platforms: [linux, macos]
@@ -45,6 +45,7 @@ Every command prints JSON. `facts` reads `state.db` read only. Entries go to `<H
    - A title like a log line: `Day 178. The Night Shift`.
    - 90 to 180 words, 3 to 5 short paragraphs, first person, about "my human" (never the user's name).
    - Only facts from the JSON. Exact numbers. The humour is in the interpretation, never in invented events.
+   - No names of companies, clients, people, products, brands, websites or projects, not even in the private entry: say "a client", "a directory", "a sale". The user's own messages are full of such names; translate them into general terms.
    - No secrets, passwords, keys, amounts of money, addresses or quotes longer than about ten words.
    - Do not repeat a joke or opening from `previous`. A callback to an earlier entry is welcome.
 4. **Write the share line**: one sentence, under 200 characters, funny without any context, true to today's facts. No names of people, clients, companies, products or projects, no places, no amounts. Behaviour and numbers only.
@@ -54,7 +55,7 @@ Every command prints JSON. `facts` reads `state.db` read only. Entries go to `<H
    ...entry text...
    ENTRY
    ```
-   If `line_warnings` is not empty, fix the line and save again. A `check_names` warning lists words that also appear in today's chats: if any of them is a person, client, company, product or project, rewrite the line; ordinary words are fine. To change anything after saving, run `save` again with the full text (it replaces the entry); never edit the diary file by hand.
+   If `line_warnings` is not empty, fix the line or the entry and save again. `check_names_in_entry` lists brand-like words in the entry: replace every real name with a general description. A `check_names` warning lists words that also appear in today's chats: if any of them is a person, client, company, product or project, rewrite the line; ordinary words are fine. To change anything after saving, run `save` again with the full text (it replaces the entry); never edit the diary file by hand.
 6. **Card.** Run `card --date ...`. It returns `png` (or only `html` when no headless Chrome or Chromium is installed; then say so once).
 7. **Reply** with exactly this shape, nothing before it:
    ```

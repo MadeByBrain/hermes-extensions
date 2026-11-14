@@ -147,6 +147,11 @@ class LineCheckTest(unittest.TestCase):
         f = dict(self.f, _vocab=set(self.f["_vocab"]) | {"friday"})
         self.assertEqual(diary.check_line("Friday the 13th, you never know.", f), [])
 
+    def test_brand_names_in_entry_are_flagged(self):
+        w = diary.check_body("We listed the site on GoodFirms and fixed example.com. Then Acme called.", self.f)
+        self.assertTrue(w and all(x in w[0] for x in ("GoodFirms", "example.com", "Acme")))
+        self.assertEqual(diary.check_body("A quiet Friday. Nobody called.", self.f), [])
+
     def test_clean_line_passes(self):
         self.assertEqual(diary.check_line("Six messages from my human, four tool calls from me.", self.f), [])
 

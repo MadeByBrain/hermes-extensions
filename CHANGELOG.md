@@ -4,6 +4,10 @@ Each entry has its own changelog and tags (`<name>-vX.Y.Z`). Release notes are t
 
 Repository: weekly compatibility check against the latest Hermes Agent release (GitHub Actions, `.github/workflows/compat.yml`), no change to any entry.
 
+## agent-diary-v1.0.1
+
+`agent-diary`: no names anywhere in the diary (companies, clients, people, products, brands, websites, projects), checked in the entry as well as in the share line; whole-day counts are no longer tied to a time window. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
+
 ## agent-diary-v1.0.0
 
 First release of the skill `agent-diary`: your agent keeps a diary. Every evening it writes a short, deadpan entry about its day with you, built only on facts from your local session history (read only), and ends it with one shareable line rendered as a card image (1080 x 1350). Names, clients and projects stay off the card: the helper checks every share line. Stdlib only, no network calls. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
