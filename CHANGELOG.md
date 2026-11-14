@@ -4,6 +4,10 @@ Each entry has its own changelog and tags (`<name>-vX.Y.Z`). Release notes are t
 
 Repository: weekly compatibility check against the latest Hermes Agent release (GitHub Actions, `.github/workflows/compat.yml`), no change to any entry.
 
+## agent-diary-v1.0.0
+
+First release of the skill `agent-diary`: your agent keeps a diary. Every evening it writes a short, deadpan entry about its day with you, built only on facts from your local session history (read only), and ends it with one shareable line rendered as a card image (1080 x 1350). Names, clients and projects stay off the card: the helper checks every share line. Stdlib only, no network calls. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
+
 ## privacy-xray-v1.0.0
 
 First release of the plugin `privacy-xray`: where does your data actually go? Records every outgoing model request, main loop and side tasks such as titles and compression, as metadata only; traces a fictitious canary person through requests and local stores; audits the config with exact fix commands; searches local stores for a person; draws an HTML leak map, also live as a dashboard tab. Local only, no network calls, never stores message content, never deletes anything. Tested on Hermes v0.22.7 and v0.23.0. Details: [plugins/privacy-xray/CHANGELOG.md](plugins/privacy-xray/CHANGELOG.md).

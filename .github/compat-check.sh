@@ -3,7 +3,8 @@
 # Needs $PY = a Python with Hermes Agent installed (set by .github/workflows/compat.yml).
 # Plugins: every folder with plugin.yaml (repo root or plugins/<name>): tests/test_*.py, then
 #          `hermes plugins validate --json` with no warnings and no failed check.
-# Skills:  every skills/<name>/SKILL.md: Hermes security scan must be "safe", linter without findings.
+# Skills:  every skills/<name>/SKILL.md: Hermes security scan must be "safe", linter without findings,
+#          then tests/<name>/test_*.py when present.
 set -uo pipefail
 : "${PY:?set PY to a Python with Hermes Agent installed}"
 fail=0
@@ -54,6 +55,12 @@ for f in lint:
 sys.exit(0 if scan.verdict == "safe" and not lint else 1)
 PY
   then :; else echo "::error::skill check failed for $s"; fail=1; fi
+  # Offline tests of a skill live outside the skill folder (an installed skill holds no tests).
+  name=$(basename "$s")
+  for t in tests/"$name"/test_*.py; do
+    [ -f "$t" ] || continue
+    if HERMES_HOME="$(mktemp -d)" "$PY" "$t"; then echo "tests ok: $t"; else echo "::error::tests failed: $t"; fail=1; fi
+  done
   echo "::endgroup::"
 done
 
