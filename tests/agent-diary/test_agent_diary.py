@@ -184,6 +184,14 @@ class EntryAndCardTest(unittest.TestCase):
         self.assertEqual(html.count("commands"), 1)  # last two words joined, nothing duplicated
         self.assertNotIn("\u2014", html)
 
+    def test_saved_stats_match_what_the_agent_read(self):
+        f = diary.collect_facts(DAY, TZ, "UTC")
+        diary.write_snapshot(f)
+        later = json.loads(json.dumps({k: v for k, v in f.items() if not k.startswith("_")}))
+        later["agent"]["tool_calls"] = 999  # the day went on between facts and save
+        r = diary.save_entry(DAY.isoformat(), "A line.", "T", "Body.", later)
+        self.assertEqual(diary.read_entry(Path(r["path"]))["stats"]["tool_calls"], 4)
+
     def test_empty_body_rejected(self):
         self.assertFalse(diary.save_entry("2026-03-11", "x", "", "   ", None)["ok"])
 

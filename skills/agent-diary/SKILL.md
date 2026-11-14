@@ -1,7 +1,7 @@
 ---
 name: agent-diary
 description: Write a nightly diary entry about your day with the user.
-version: 1.0.2
+version: 1.0.3
 author: MadeByBrain
 license: MIT
 platforms: [linux, macos]

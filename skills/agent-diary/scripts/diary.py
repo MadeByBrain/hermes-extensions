@@ -44,7 +44,7 @@ except ImportError:  # Python 3.9, still the system python3 on some Macs
 _END = object()
 
 
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 
 # Background work is not "the day with the user". oneshot = scripted hermes chat -q runs.
 EXCLUDED_SOURCES = tuple(x.strip() for x in os.environ.get(
@@ -445,6 +445,40 @@ def check_body(body: str, facts: Optional[dict] = None) -> list[str]:
             "general description (a client, a directory, a sale) and save again."]
 
 
+def _stats_from_facts(facts: dict) -> dict:
+    u, a = facts.get("user", {}), facts.get("agent", {})
+    return {"messages": u.get("messages", 0), "sessions": facts.get("sessions", {}).get("count", 0),
+            "first": u.get("first_message"), "last": u.get("last_message"),
+            "tool_calls": a.get("tool_calls", 0), "please": u.get("please_thanks", 0),
+            "corrections": u.get("corrections", 0), "admissions": a.get("admissions", 0),
+            "day_number": facts.get("day_number"), "lang": facts.get("language_guess", "en")}
+
+
+SNAPSHOT_MAX_AGE = 6 * 3600
+
+
+def write_snapshot(facts: dict) -> None:
+    """Keep the numbers the agent saw, so the card matches the text even if the day goes on."""
+    d = diary_dir() / ".facts"
+    d.mkdir(parents=True, exist_ok=True)
+    tmp = d / (facts["date"] + ".json.tmp")
+    tmp.write_text(json.dumps({"taken_at": _dt.datetime.now().timestamp(), "stats": _stats_from_facts(facts)}),
+                   encoding="utf-8")
+    os.chmod(tmp, 0o600)
+    os.replace(tmp, d / (facts["date"] + ".json"))
+
+
+def read_snapshot(date_s: str) -> Optional[dict]:
+    p = diary_dir() / ".facts" / (date_s + ".json")
+    try:
+        snap = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if _dt.datetime.now().timestamp() - float(snap.get("taken_at", 0)) > SNAPSHOT_MAX_AGE:
+        return None
+    return snap.get("stats")
+
+
 def save_entry(date_s: str, line: str, title: str, body: str, facts: Optional[dict]) -> dict:
     if not body.strip():
         return {"ok": False, "error": "empty entry", "next_step": "Pass the entry text on stdin or with --from."}
@@ -457,14 +491,7 @@ def save_entry(date_s: str, line: str, title: str, body: str, facts: Optional[di
     except OSError:
         pass
     path = d / (date_s + ".md")
-    stats = {}
-    if facts:
-        u, a = facts.get("user", {}), facts.get("agent", {})
-        stats = {"messages": u.get("messages", 0), "sessions": facts.get("sessions", {}).get("count", 0),
-                 "first": u.get("first_message"), "last": u.get("last_message"),
-                 "tool_calls": a.get("tool_calls", 0), "please": u.get("please_thanks", 0),
-                 "corrections": u.get("corrections", 0), "admissions": a.get("admissions", 0),
-                 "day_number": facts.get("day_number"), "lang": facts.get("language_guess", "en")}
+    stats = read_snapshot(date_s) or (_stats_from_facts(facts) if facts else {})
     head = ["---", "date: " + json.dumps(date_s), "title: " + json.dumps(title, ensure_ascii=False),
             "line: " + json.dumps(line, ensure_ascii=False), "stats: " + json.dumps(stats, ensure_ascii=False),
             "written_at: " + json.dumps(_dt.datetime.now().astimezone().isoformat(timespec="minutes")),
@@ -661,7 +688,10 @@ def _print(obj) -> None:
 
 
 def _cmd_facts(a, tz, tz_name) -> int:
-    _print(collect_facts(_day(a.date, tz), tz, tz_name))
+    facts = collect_facts(_day(a.date, tz), tz, tz_name)
+    if facts.get("ok"):
+        write_snapshot(facts)
+    _print(facts)
     return 0
 
 

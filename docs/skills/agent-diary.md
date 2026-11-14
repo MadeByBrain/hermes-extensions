@@ -59,7 +59,7 @@ One model call chain per day: in testing a nightly run took 6 tool calls and abo
 
 ## Tested
 
-- 18 offline tests (`tests/agent-diary/`), Hermes security scan `safe`, skill linter without findings.
+- 19 offline tests (`tests/agent-diary/`), Hermes security scan `safe`, skill linter without findings.
 - Live on Hermes Agent v0.23.0 against a real session history (read only, isolated test home): one run with Claude Opus, one with DeepSeek V4 Pro through OpenRouter. Every number in the entries matched the facts. A cron run delivered entry and card to Telegram through Hermes' standard `MEDIA:` attachment path.
 
 ## Beyond this skill

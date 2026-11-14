@@ -4,6 +4,10 @@ Each entry has its own changelog and tags (`<name>-vX.Y.Z`). Release notes are t
 
 Repository: weekly compatibility check against the latest Hermes Agent release (GitHub Actions, `.github/workflows/compat.yml`), no change to any entry.
 
+## agent-diary-v1.0.3
+
+`agent-diary`: card numbers always match the entry text (the numbers the agent read are kept and used at save time). Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).
+
 ## agent-diary-v1.0.2
 
 `agent-diary`: helper cleaned up for the Hermes Agent lint and code health rules, tested on Python 3.9 too, no change in behaviour. Details: [docs/skills/agent-diary-changelog.md](docs/skills/agent-diary-changelog.md).

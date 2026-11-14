@@ -1,5 +1,9 @@
 # Changelog: agent-diary
 
+## agent-diary-v1.0.3
+
+- The numbers saved with an entry (and shown on the card) are now exactly the ones the agent read with `facts`, not a fresh count at save time. Before, a day that went on between `facts` and `save` could put 444 on the card while the text said 442.
+
 ## agent-diary-v1.0.2
 
 - Helper follows the Hermes Agent lint and code health rules (narrow exception handling, command table instead of an if/elif chain, no regex flag aliases). No change in behaviour.
